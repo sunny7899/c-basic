@@ -80,7 +80,7 @@ int main()
         printf("Press P to get Power of the number\n");
         printf("Press Q to Quit\n");
         printf("Enter Operator: ");
-        scanf("%c", &operator);    // Read the operator from user
+        scanf(" %c", &operator);    // Read the operator from user
     
         // Switch case to perform the chosen operation
         switch(operator)
