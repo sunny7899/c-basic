@@ -3,7 +3,6 @@
 #include <time.h>
 
 void printRock() {
-
     printf("┈┈┈┈┈┈┈┈┳╮\n");
     printf("┈┈┈╭┻━━╮┃┃╮\n");
     printf("┈┈┈┃╲┏━╯┻┫\n");
@@ -31,60 +30,74 @@ void printScissors() {
     printf("┈┈┈╰╮╯┊┊┊╭╯\n");
 }
 
+void displayChoice(int choice) {
+    if (choice == 0) printRock();
+    else if (choice == 1) printPaper();
+    else if (choice == 2) printScissors();
+}
+
+int getWinner(int playerChoice, int computerChoice) {
+    if (playerChoice == computerChoice) return 0;  // Tie
+    else if ((playerChoice == 0 && computerChoice == 2) ||
+             (playerChoice == 1 && computerChoice == 0) ||
+             (playerChoice == 2 && computerChoice == 1)) {
+        return 1;  // Player wins
+    }
+    return -1; // Computer wins
+}
+
 int main() {
     int playerChoice, computerChoice;
+    int wins = 0, losses = 0, ties = 0;
     const char *choices[] = {"Rock", "Paper", "Scissors"};
     char playAgain;
 
-    // Seed the random number generator
     srand(time(NULL));
 
     do {
-        printf("Choose:\n");
+        printf("\nChoose:\n");
         printf("0: Rock\n");
         printf("1: Paper\n");
         printf("2: Scissors\n");
         printf("Enter your choice (0-2): ");
-        scanf("%d", &playerChoice);
 
-        if (playerChoice < 0 || playerChoice > 2) {
-            printf("Invalid choice! Please enter 0, 1, or 2.\n");
+        if (scanf("%d", &playerChoice) != 1 || playerChoice < 0 || playerChoice > 2) {
+            printf("Invalid input! Please enter a number between 0 and 2.\n");
+            while (getchar() != '\n');  // Clear the input buffer
             continue;
         }
 
-        // Generate computer's choice
         computerChoice = rand() % 3;
 
-        // Display player's choice
         printf("\nYou chose: %s\n", choices[playerChoice]);
-        if (playerChoice == 0) printRock();
-        else if (playerChoice == 1) printPaper();
-        else if (playerChoice == 2) printScissors();
+        displayChoice(playerChoice);
 
-        // Display computer's choice
         printf("\nComputer chose: %s\n", choices[computerChoice]);
-        if (computerChoice == 0) printRock();
-        else if (computerChoice == 1) printPaper();
-        else if (computerChoice == 2) printScissors();
+        displayChoice(computerChoice);
 
-        // Determine the winner
-        if (playerChoice == computerChoice) {
+        int result = getWinner(playerChoice, computerChoice);
+        if (result == 0) {
             printf("\nIt's a tie!\n");
-        } else if ((playerChoice == 0 && computerChoice == 2) ||
-                   (playerChoice == 1 && computerChoice == 0) ||
-                   (playerChoice == 2 && computerChoice == 1)) {
+            ties++;
+        } else if (result == 1) {
             printf("\nYou win!\n");
+            wins++;
         } else {
             printf("\nYou lose!\n");
+            losses++;
         }
 
-        // Ask if the player wants to play again
-        printf("\nDo you want to play again? (y for yes, q for quit): ");
+        printf("\nPlay again? (y for yes, q for quit): ");
         scanf(" %c", &playAgain);
-        
-        
+        while (getchar() != '\n');  // Clear the input buffer
+
     } while (playAgain == 'y' || playAgain == 'Y');
 
+    printf("\nGame Summary:\n");
+    printf("Wins: %d\n", wins);
+    printf("Losses: %d\n", losses);
+    printf("Ties: %d\n", ties);
     printf("Thanks for playing!\n");
+
     return 0;
 }
