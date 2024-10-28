@@ -58,6 +58,19 @@ void powerNumber(double base, double exponent)
     printf("%lf^%lf = %lf\n", base, exponent, pow(base, exponent));
 }
 
+
+void sineNumber(double a) {
+    printf("sin(%lf) = %lf\n", a, sin(a));
+}
+
+void cosineNumber(double a) {
+    printf("cos(%lf) = %lf\n", a, cos(a));
+}
+
+void tangentNumber(double a) {
+    printf("tan(%lf) = %lf\n", a, tan(a));
+}
+
 int main()
 {
     printf("***************Calculator***************\n");
@@ -78,6 +91,9 @@ int main()
         printf("Press S to Square number\n");
         printf("Press R to Squareroot number\n");
         printf("Press P to get Power of the number\n");
+        printf("Press A to get Sine of the number\n");
+        printf("Press C to get Cosine of the number\n");
+        printf("Press T to get Tangent of the number\n");
         printf("Press Q to Quit\n");
         printf("Enter Operator: ");
         scanf(" %c", &operator);    // Read the operator from user
@@ -128,7 +144,29 @@ int main()
                 printf("Enter numbers: ");
                 scanf("%lf %lf", &n1, &n2); 
                 powerNumber(n1, n2);
-                break;  
+                break;
+
+                        
+            case 'A':
+            case 'a':
+                printf("Enter number (in radians): ");
+                scanf("%lf", &n1);  
+                sineNumber(n1);
+                break;
+
+            case 'C':
+            case 'c':
+                printf("Enter number (in radians): ");
+                scanf("%lf", &n1);  
+                cosineNumber(n1);
+                break;
+
+            case 'T':
+            case 't':
+                printf("Enter number (in radians): ");
+                scanf("%lf", &n1);  
+                tangentNumber(n1);
+                break;
             case 'Q':
             case 'q':
                 printf("Exiting Program ...\n");
