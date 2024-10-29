@@ -58,6 +58,25 @@ void powerNumber(double base, double exponent)
     printf("%lf^%lf = %lf\n", base, exponent, pow(base, exponent));
 }
 
+// Function for unit conversion: meters to kilometers
+void metersToKilometers(double meters) {
+    printf("%lf meters = %lf kilometers\n", meters, meters / 1000);
+}
+
+// Function for unit conversion: Celsius to Fahrenheit
+void celsiusToFahrenheit(double celsius) {
+    printf("%lf degrees Celsius = %lf degrees Fahrenheit\n", celsius, (celsius * 9 / 5) + 32);
+}
+
+// Function for unit conversion: kilometers to miles
+void kilometersToMiles(double kilometers) {
+    printf("%lf kilometers = %lf miles\n", kilometers, kilometers * 0.621371);
+}
+
+// Function for unit conversion: Fahrenheit to Celsius
+void fahrenheitToCelsius(double fahrenheit) {
+    printf("%lf degrees Fahrenheit = %lf degrees Celsius\n", fahrenheit, (fahrenheit - 32) * 5 / 9);
+}
 
 void sineNumber(double a) {
     printf("sin(%lf) = %lf\n", a, sin(a));
@@ -94,6 +113,10 @@ int main()
         printf("Press A to get Sine of the number\n");
         printf("Press C to get Cosine of the number\n");
         printf("Press T to get Tangent of the number\n");
+        printf("Press M to Convert Meters to Kilometers\n");
+        printf("Press F to Convert Celsius to Fahrenheit\n");
+        printf("Press K to Convert Kilometers to Miles\n");
+        printf("Press D to Convert Fahrenheit to Celsius\n");
         printf("Press Q to Quit\n");
         printf("Enter Operator: ");
         scanf(" %c", &operator);    // Read the operator from user
@@ -167,6 +190,35 @@ int main()
                 scanf("%lf", &n1);  
                 tangentNumber(n1);
                 break;
+
+            case 'M':
+            case 'm':
+                printf("Enter distance in meters: ");
+                scanf("%lf", &n1);
+                metersToKilometers(n1);
+                break;
+
+            case 'F':
+            case 'f':
+                printf("Enter temperature in Celsius: ");
+                scanf("%lf", &n1);
+                celsiusToFahrenheit(n1);
+                break;
+
+            case 'K':
+            case 'k':
+                printf("Enter distance in kilometers: ");
+                scanf("%lf", &n1);
+                kilometersToMiles(n1);
+                break;
+
+            case 'D':
+            case 'd':
+                printf("Enter temperature in Fahrenheit: ");
+                scanf("%lf", &n1);
+                fahrenheitToCelsius(n1);
+                break;
+
             case 'Q':
             case 'q':
                 printf("Exiting Program ...\n");
