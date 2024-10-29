@@ -1,108 +1,166 @@
 #include <stdio.h>
 #include <ctype.h>
+#include <time.h>
+
+int player1Wins = 0, player2Wins = 0, draws = 0;
 
 // Function to display the Tic-Tac-Toe board
-void displayBoard(char _1, char _2, char _3, char _4, char _5, char _6, char _7, char _8, char _9) {
-    printf("\n %c | %c | %c \n------------\n", _1, _2, _3);
-    printf(" %c | %c | %c \n------------\n", _4, _5, _6);
-    printf(" %c | %c | %c \n\n", _7, _8, _9);
+void displayBoard(char board[]) {
+    printf("\n %c | %c | %c \n------------\n", board[0], board[1], board[2]);
+    printf(" %c | %c | %c \n------------\n", board[3], board[4], board[5]);
+    printf(" %c | %c | %c \n\n", board[6], board[7], board[8]);
 }
 
 // Function to check if a player has won
-int checkWin(char a, char b, char c, char playerSymbol) {
-    return (a == playerSymbol && b == playerSymbol && c == playerSymbol);
+int checkWin(char board[], char playerSymbol) {
+    return (
+        (board[0] == playerSymbol && board[1] == playerSymbol && board[2] == playerSymbol) ||
+        (board[3] == playerSymbol && board[4] == playerSymbol && board[5] == playerSymbol) ||
+        (board[6] == playerSymbol && board[7] == playerSymbol && board[8] == playerSymbol) ||
+        (board[0] == playerSymbol && board[3] == playerSymbol && board[6] == playerSymbol) ||
+        (board[1] == playerSymbol && board[4] == playerSymbol && board[7] == playerSymbol) ||
+        (board[2] == playerSymbol && board[5] == playerSymbol && board[8] == playerSymbol) ||
+        (board[0] == playerSymbol && board[4] == playerSymbol && board[8] == playerSymbol) ||
+        (board[2] == playerSymbol && board[4] == playerSymbol && board[6] == playerSymbol)
+    );
 }
 
 // Function to clear invalid input from the buffer
 void clearInputBuffer() {
-    while (getchar() != '\n'); // Discards invalid input until a newline is found
+    while (getchar() != '\n');
+}
+
+// Function to display the main menu
+void showMenu() {
+    printf("\n--- Main Menu ---\n");
+    printf("1. Start New Game\n");
+    printf("2. View Scoreboard\n");
+    printf("3. Exit\n");
+    printf("Choose an option: ");
+}
+
+// Function to display the scoreboard
+void displayScoreboard(char* name1, char* name2) {
+    printf("\n--- Scoreboard ---\n");
+    printf("%s Wins: %d\n%s Wins: %d\nDraws: %d\n", name1, player1Wins, name2, player2Wins, draws);
+}
+
+// Function to handle the AI move
+void aiMove(char board[], char aiSymbol) {
+    for (int i = 0; i < 9; i++) {
+        if (board[i] == ' ') {
+            board[i] = aiSymbol;  // AI places its symbol
+            break;
+        }
+    }
+}
+
+// Function to handle undo last move
+void undoLastMove(char board[], int moves[], int* moveCount) {
+    if (*moveCount > 0) {
+        int lastMove = moves[--(*moveCount)];
+        board[lastMove] = ' ';  // Reset the last position
+    } else {
+        printf("No moves to undo!\n");
+    }
+}
+
+// Function to prompt for a timed move
+int timedMove(char* currentPlayer) {
+    time_t start, end;
+    int position;
+
+    printf("%s, you have 10 seconds to make a move (1-9): ", currentPlayer);
+    time(&start);
+
+    if (scanf("%d", &position) != 1) {
+        time(&end);
+        if (difftime(end, start) > 10.0) {
+            printf("Time's up! Skipping your turn.\n");
+            return -1;  // Time expired, move skipped
+        }
+    }
+    return position;
 }
 
 int main() {
     char replay;
+    char board[9];
+    int moves[9];
+    int moveCount = 0;
+    char name1[20], name2[20];
 
-    do {
-        int i, n;
-        // Initialize the board cells as empty
-        char _1 = ' ', _2 = ' ', _3 = ' ', _4 = ' ', _5 = ' ', _6 = ' ', _7 = ' ', _8 = ' ', _9 = ' ';
-        char name_1[20], name_2[20];
-        
-        // Get player names
-        printf("Player 1, enter your name: ");
-        fgets(name_1, sizeof(name_1), stdin);
-        printf("Player 2, enter your name: ");
-        fgets(name_2, sizeof(name_2), stdin);
+    printf("Enter Player 1 name: ");
+    fgets(name1, sizeof(name1), stdin);
+    printf("Enter Player 2 name: ");
+    fgets(name2, sizeof(name2), stdin);
 
-        // Assign symbols to players and display the initial board
-        printf("\n 'X' is for %s '0' is for %s", name_1, name_2);
-        displayBoard(_1, _2, _3, _4, _5, _6, _7, _8, _9);
+    while (1) {
+        int choice;
+        showMenu();
+        scanf("%d", &choice);
+        clearInputBuffer();
 
-        // Loop for each turn (maximum of 9 turns)
-        for (i = 1; i <= 9; i++) {
-            char playerSymbol = (i % 2 != 0) ? 'X' : '0'; // Alternate symbols between 'X' and '0'
-            char* currentPlayer = (i % 2 != 0) ? name_1 : name_2;
+        if (choice == 3) {
+            printf("Exiting the game. Thanks for playing!\n");
+            break;
+        } else if (choice == 2) {
+            displayScoreboard(name1, name2);
+            continue;
+        } else if (choice != 1) {
+            printf("Invalid option. Please try again.\n");
+            continue;
+        }
 
-            while (1) { // Loop to ensure valid position is chosen
-                printf("%s, enter your position (1-9): ", currentPlayer);
-                if (scanf("%d", &n) != 1) { // Check if input is valid
-                    printf("Invalid input. Please enter a number between 1 and 9.\n");
-                    clearInputBuffer(); // Clear the invalid input from the buffer
-                    continue;
-                }
-                
-                if (n < 1 || n > 9) { // Check for valid range
-                    printf("Invalid position. Please try again.\n");
-                    continue;
-                }
+        // Initialize the board cells and move count
+        for (int i = 0; i < 9; i++) board[i] = ' ';
+        moveCount = 0;
+        displayBoard(board);
 
-                // Determine the selected board cell based on position
-                char *position = NULL;
-                switch (n) {
-                    case 1: position = &_1; break;
-                    case 2: position = &_2; break;
-                    case 3: position = &_3; break;
-                    case 4: position = &_4; break;
-                    case 5: position = &_5; break;
-                    case 6: position = &_6; break;
-                    case 7: position = &_7; break;
-                    case 8: position = &_8; break;
-                    case 9: position = &_9; break;
-                }
-                
-                // Place symbol if position is empty, otherwise prompt again
-                if (*position == ' ') {
-                    *position = playerSymbol;
+        // Main game loop
+        for (int i = 1; i <= 9; i++) {
+            char playerSymbol = (i % 2 != 0) ? 'X' : '0';
+            char* currentPlayer = (i % 2 != 0) ? name1 : name2;
+
+            int n;
+            if (strcmp(currentPlayer, "AI") == 0) {
+                aiMove(board, playerSymbol);
+            } else {
+                while (1) {
+                    n = timedMove(currentPlayer);
+                    if (n == -1) break;
+
+                    if (n < 1 || n > 9 || board[n - 1] != ' ') {
+                        printf("Invalid or taken position. Try again.\n");
+                        continue;
+                    }
+                    board[n - 1] = playerSymbol;
+                    moves[moveCount++] = n - 1;
                     break;
-                } else {
-                    printf("Position already taken. Try again.\n");
                 }
             }
+            displayBoard(board);
 
-            // Display updated board after each move
-            displayBoard(_1, _2, _3, _4, _5, _6, _7, _8, _9);
-
-            // Check for win conditions
-            if (checkWin(_1, _2, _3, playerSymbol) || checkWin(_4, _5, _6, playerSymbol) || 
-                checkWin(_7, _8, _9, playerSymbol) || checkWin(_1, _4, _7, playerSymbol) || 
-                checkWin(_2, _5, _8, playerSymbol) || checkWin(_3, _6, _9, playerSymbol) || 
-                checkWin(_1, _5, _9, playerSymbol) || checkWin(_3, _5, _7, playerSymbol)) {
+            if (checkWin(board, playerSymbol)) {
                 printf("%s wins!\n", currentPlayer);
-               break;
+                if (playerSymbol == 'X') player1Wins++;
+                else player2Wins++;
+                break;
             }
         }
 
-        if (i > 9) {
-            // If all positions are filled with no winner, it's a draw
+        // Update scoreboard if it’s a draw
+        if (moveCount >= 9) {
             printf("It's a draw!\n");
+            draws++;
         }
 
-        // Ask players if they want to play again
+        // Ask if players want to play again
         printf("Do you want to play again? (y/n): ");
-        clearInputBuffer(); // Clear the buffer before taking the next input
+        clearInputBuffer();
         scanf("%c", &replay);
+        if (tolower(replay) != 'y') break;
+    }
 
-    } while (tolower(replay) == 'y'); // Repeat if players choose 'y' or 'Y'
-
-    printf("Thanks for playing!\n");
     return 0;
 }
