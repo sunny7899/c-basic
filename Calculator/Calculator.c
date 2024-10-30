@@ -23,13 +23,9 @@ void multiplyNumbers(double a, double b)
 void divideNumbers(double a, double b)
 {
     if (b != 0)
-        {
-            printf("%lf / %lf = %lf\n", a, b, a/b);
-        }
+        printf("%lf / %lf = %lf\n", a, b, a/b);
     else
-    {
         printf("Error! Division by zero is not allowed.\n");
-    }
 }
 
 // Function to calculate the square of a number
@@ -42,20 +38,28 @@ void squareNumber(double a)
 void sqrtNumber(double a)
 {
     if (a >= 0)
-        {
-            printf("%lf^(1/2) = %lf\n", a, sqrt(a));
-        }
+        printf("%lf^(1/2) = %lf\n", a, sqrt(a));
     else
-        {
-            printf("Error! Squareroot of negative number is not allowed.\n");
-        }
-    
+        printf("Error! Squareroot of negative number is not allowed.\n");
 }
 
 // Function to raise a base to the power of an exponent
 void powerNumber(double base, double exponent)
 {
     printf("%lf^%lf = %lf\n", base, exponent, pow(base, exponent));
+}
+
+// Function to calculate factorial of a number
+void factorialNumber(int n) {
+    if (n < 0) {
+        printf("Error! Factorial of negative number is not allowed.\n");
+        return;
+    }
+    unsigned long long fact = 1;
+    for (int i = 1; i <= n; i++) {
+        fact *= i;
+    }
+    printf("Factorial of %d = %llu\n", n, fact);
 }
 
 // Function for unit conversion: meters to kilometers
@@ -94,9 +98,10 @@ int main()
 {
     printf("***************Calculator***************\n");
 
-      char operator;    // Variable to store the chosen operator
-    double n1, n2;      // Variables to store numbers entered by the user
-       int status = 1;  // Status to control the main loop
+    char operator;    // Variable to store the chosen operator
+    double n1, n2;    // Variables to store numbers entered by the user
+    int intNum;       // Variable to store integer numbers for factorial
+    int status = 1;   // Status to control the main loop
     
     // Loop until the user decides to quit by entering 'Q' or 'q'
     while(status) {
@@ -113,6 +118,7 @@ int main()
         printf("Press A to get Sine of the number\n");
         printf("Press C to get Cosine of the number\n");
         printf("Press T to get Tangent of the number\n");
+        printf("Press F to calculate Factorial of a number\n");
         printf("Press M to Convert Meters to Kilometers\n");
         printf("Press F to Convert Celsius to Fahrenheit\n");
         printf("Press K to Convert Kilometers to Miles\n");
@@ -169,7 +175,12 @@ int main()
                 powerNumber(n1, n2);
                 break;
 
-                        
+            case 'F':
+                printf("Enter a positive integer: ");
+                scanf("%d", &intNum);
+                factorialNumber(intNum);
+                break;
+
             case 'A':
             case 'a':
                 printf("Enter number (in radians): ");
@@ -196,13 +207,6 @@ int main()
                 printf("Enter distance in meters: ");
                 scanf("%lf", &n1);
                 metersToKilometers(n1);
-                break;
-
-            case 'F':
-            case 'f':
-                printf("Enter temperature in Celsius: ");
-                scanf("%lf", &n1);
-                celsiusToFahrenheit(n1);
                 break;
 
             case 'K':
